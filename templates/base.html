@@ -3,7 +3,7 @@
     <head>
         <nav>
             <a href="/blog">Main Blog Page</a>
-        </br>
+            &nbsp;
             <a href="/newpost">Add a Blog Entry</a>
         </nav>
         <title>{{title}}</title>
@@ -11,18 +11,32 @@
             .error {
                 color: red;
             }
+
+            p {
+                font-family: sans-serif;
+            }
+
+            h2 {
+                font-family: sans-serif;
+            }
+
+            hr {
+                border: 0; 
+                height: 0; 
+                border-top: 1px solid rgba(0, 0, 0, 0.1); 
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            }
         </style>
     </head>
     <body>
 
-<!--         {% with messages = get_flashed_messages(with_categories=True) %}
+        {% with messages = get_flashed_messages(with_categories=True) %}
             <ul>
             {% for category,message in messages %}
                 <li class="{{category}}">{{message}}</li>
             {% endfor %}
             </ul>
-         {% endwith %}
-        -->
+        {% endwith %}
 
         {% block content %}
         {% endblock %}

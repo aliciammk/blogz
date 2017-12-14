@@ -24,28 +24,38 @@ class Blog(db.Model):
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
 # TODO rewrite to display a page that shows a singular blog post
-
-    return render_template('blog.html', blog=blog)
+    blogs = Blog.query.all()
+    return render_template('blog.html', title="Build a blog", blogs=blogs)
 
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def newpost():
-# TODO rewrite so this page allows user to submit new post
-# TODO include error if either the blog body or title are left empty, keeping content entered content
-        
-    #blog_title = request.form['title']
-    #blog_body = request.form['body']
-    #new_blog = Blog(blog_title, blog_body)
-    #db.session.add(new_blog)
-    #db.session.commit()
+    if request.method == 'POST':
+        title = request.form['title']
+        body = request.form['body']
+        new_blog = Blog(title, body)
+    
+        if len(title) > 0 and len(body) > 0:
+            db.session.add(new_blog)
+            db.session.commit()
+            return redirect('/blog')
 
-    return render_template('newpost.html')
+        elif len(title) == 0 and len(body) > 0:
+            flash('Please fill in a title for your blog.', 'error')
+            return render_template('newpost.html', body=body)
 
+        elif len(title) > 0 and len(body) == 0:
+            flash('Please fill in the body for your blog.', 'error')
+            return render_template('newpost.html', title=title)
+    
+    else:
+        return render_template('newpost.html')
+            
 
-@app.route('/', methods=['POST','GET'])
-def index():
+#@app.route('/', methods=['POST','GET'])
+#def index():
 # render a page that shows all the blogs
-    return render_template('blog.html', title="Build a blog",)
+    #return render_template('blog.html', title="Build a blog")
 
 if __name__ == '__main__':
     app.run()
