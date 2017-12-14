@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 app.secret_key = 'y337kGcys&zP3B'
 
 class Blog(db.Model):
-# rewrite this to be a blog with id, title, body
+    #defines the blog class for the database
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(750))
@@ -23,23 +23,36 @@ class Blog(db.Model):
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
-# TODO rewrite to display a page that shows a singular blog post
-    blogs = Blog.query.all()
-    return render_template('blog.html', title="Build a blog", blogs=blogs)
+    #displays single blog entry
+    blog_id = request.args.get('id')
+    if (blog_id):
+        blog = Blog.query.get(blog_id)
+        return render_template('entry.html', blog=blog, title="Blog Entry")
+    #displays all blogs on one page
+    else:
+        blogs = Blog.query.all()
+        return render_template('blog.html', title="Build a blog", blogs=blogs)
 
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def newpost():
+    # creates a new post
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
         new_blog = Blog(title, body)
-    
+        
+        
+        # redirects to post after post is successfully made
         if len(title) > 0 and len(body) > 0:
             db.session.add(new_blog)
             db.session.commit()
-            return redirect('/blog')
+            new_blog_id = new_blog.id
+            blog = Blog.query.get(new_blog_id)
+            url = "/blog?id=" + str(new_blog_id)
+            return redirect(url)
 
+        # redirects back to form with error if user leaves field blank
         elif len(title) == 0 and len(body) > 0:
             flash('Please fill in a title for your blog.', 'error')
             return render_template('newpost.html', body=body)
@@ -52,10 +65,10 @@ def newpost():
         return render_template('newpost.html')
             
 
-#@app.route('/', methods=['POST','GET'])
-#def index():
-# render a page that shows all the blogs
-    #return render_template('blog.html', title="Build a blog")
+@app.route('/', methods=['POST','GET'])
+def index():
+    # redirects to page with all blogs displayed
+    return redirect('/blog')
 
 if __name__ == '__main__':
     app.run()
