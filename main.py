@@ -53,16 +53,16 @@ def newpost():
             return redirect(url)
 
         # redirects back to form with error if user leaves field blank
-        elif len(title) == 0 and len(body) > 0:
+        elif len(title) == 0:
             flash('Please fill in a title for your blog.', 'error')
             return render_template('newpost.html', body=body)
 
-        elif len(title) > 0 and len(body) == 0:
+        elif len(body) == 0:
             flash('Please fill in the body for your blog.', 'error')
             return render_template('newpost.html', title=title)
     
-    else:
-        return render_template('newpost.html')
+
+    return render_template('newpost.html')
             
 
 @app.route('/', methods=['POST','GET'])
