@@ -34,11 +34,11 @@ class User(db.Model):
         self.password = password
 
 
-#@app.before_request
-#def require_login():
-    #allowed_routes = ['login', 'register']
-    #if request.endpoint not in allowed_routes and 'email' not in session:
-        #return redirect('/login')
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'register', 'blog', 'index']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -88,6 +88,12 @@ def register():
     return render_template('register.html')
 
 
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect('/blog')
+
+
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
     #displays single blog entry
@@ -98,7 +104,7 @@ def blog():
     #displays all blogs on one page
     else:
         blogs = Blog.query.all()
-        return render_template('blog.html', title="Build a blog", blogs=blogs)
+        return render_template('blog.html', blogs=blogs)
 
 
 @app.route('/newpost', methods=['POST', 'GET'])
