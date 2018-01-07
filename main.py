@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 app.secret_key = 'y337kGcys&zP3B'
 
 class Blog(db.Model):
-    #defines the blog class for the database
+    # defines the blog class for the database
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(750))
@@ -23,7 +23,7 @@ class Blog(db.Model):
         self.user = user
 
 class User(db.Model):
-    #defines the user for the database
+    # defines the user for the database
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
@@ -67,7 +67,7 @@ def register():
         verify = request.form['verify']
         
         existing_user = User.query.filter_by(username=username).first()
-        #validates user password  
+        # validates user password  
         if len(username) == 0:
             flash('Please enter a username.', 'error')
         elif len(password) == 0:
@@ -96,12 +96,12 @@ def logout():
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
-    #displays single blog entry
     blog_id = request.args.get('id')
+    # displays single blog entry
     if (blog_id):
         blog = Blog.query.get(blog_id)
         return render_template('entry.html', blog=blog, title="Blog Entry")
-    #displays all blogs on one page
+    # displays all blogs on one page
     else:
         blogs = Blog.query.all()
         return render_template('blog.html', blogs=blogs)
@@ -139,8 +139,10 @@ def newpost():
 
 @app.route('/', methods=['POST','GET'])
 def index():
-    # redirects to page with all blogs displayed
-    return redirect('/blog')
+    user_id = request.args.get('id')
+    users = User.query.all()
+    return render_template('index.html', users=users)
+
 
 if __name__ == '__main__':
     app.run()
