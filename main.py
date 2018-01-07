@@ -97,10 +97,12 @@ def logout():
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
     blog_id = request.args.get('id')
+    user_id = request.args.get('id')
     # displays single blog entry
     if (blog_id):
         blog = Blog.query.get(blog_id)
-        return render_template('entry.html', blog=blog, title="Blog Entry")
+        user = User.query.get(user_id)
+        return render_template('entry.html', blog=blog, user=user)
     # displays all blogs on one page
     else:
         blogs = Blog.query.all()
