@@ -15,30 +15,30 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(750))
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, body, owner):
+    def __init__(self, title, body, user):
         self.title = title
         self.body = body
-        self.owner = owner
+        self.user = user
 
 class User(db.Model):
     #defines the user for the database
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
-    blogs = db.relationship('Blog', backref='owner')
+    blogs = db.relationship('Blog', backref='user')
 
     def __init__(self, username, password):
         self.username = username
         self.password = password
 
 
-@app.before_request
-def require_login():
-    allowed_routes = ['login', 'register']
-    if request.endpoint not in allowed_routes and 'email' not in session:
-        return redirect('/login')
+#@app.before_request
+#def require_login():
+    #allowed_routes = ['login', 'register']
+    #if request.endpoint not in allowed_routes and 'email' not in session:
+        #return redirect('/login')
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -59,17 +59,22 @@ def login():
     return render_template('login.html')
 
 
-    @app.route('/register', methods=['POST', 'GET'])
+@app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         verify = request.form['verify']
         
-    else:
         existing_user = User.query.filter_by(username=username).first()
-        # validates user password  
-        if password != verify:
+        #validates user password  
+        if len(username) == 0:
+            flash('Please enter a username.', 'error')
+        elif len(password) == 0:
+            flash('Please enter a password.', 'error')
+        elif len(verify) == 0:
+            flash('Please verify password.', 'error')
+        elif password != verify:
            flash('Passwords do not match.', 'error')
         elif not existing_user:
             new_user = User(username, password)
@@ -78,8 +83,7 @@ def register():
             session['username'] = username
             return redirect('/newpost')
         else:
-            # TODO user better response messaging
-            return '<h1>Duplicate user</h1>'
+            flash('Duplicate user.', 'error')
 
     return render_template('register.html')
 
@@ -103,8 +107,8 @@ def newpost():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        new_blog = Blog(title, body, owner)
-        
+        user = User.query.filter_by(username=session['username']).first()
+        new_blog = Blog(title, body, user)
         
         # redirects to post after post is successfully made
         if len(title) > 0 and len(body) > 0:
@@ -122,8 +126,7 @@ def newpost():
 
         elif len(body) == 0:
             flash('Please fill in the body for your blog.', 'error')
-            return render_template('newpost.html', title=title)
-    
+            return render_template('newpost.html', title=title) 
 
     return render_template('newpost.html')
             
