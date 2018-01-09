@@ -2,14 +2,14 @@
 <html>
     <head>
         <nav>
-            <div>
+            <div class="blogging">
                 <a href="/">home</a>
                     &nbsp;
                 <a href="/blog">all posts</a>
                 &nbsp;
                 <a href="/newpost">new post</a>
             </div> 
-            <div>
+            <div class="signin">
                 <a href='/logout'>logout</a>
                 &nbsp;
                 <a href='/login'>login</a>
@@ -17,6 +17,10 @@
         </nav>
         <title>{{title}}</title>
         <style>
+            nav {
+                padding-bottom: 20px;
+            }
+            
             .error {
                 color: red;
             }
@@ -34,6 +38,14 @@
                 height: 0; 
                 border-top: 1px solid rgba(0, 0, 0, 0.1); 
                 border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
+            .blogging {
+                float:left;
+            }
+
+            .signin {
+                float: right;
             }
         </style>
     </head>
