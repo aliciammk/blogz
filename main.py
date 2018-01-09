@@ -97,8 +97,8 @@ def logout():
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
     blog_id = request.args.get('id')
-    user_id = request.args.get('user_id')
-    
+    user_id = request.args.get('userid')
+
     # displays single blog entry
     if (blog_id):
         blog = Blog.query.get(blog_id)
@@ -146,7 +146,6 @@ def newpost():
 
 @app.route('/', methods=['POST','GET'])
 def index():
-    user_id = request.args.get('id')
     users = User.query.all()
     return render_template('index.html', users=users)
 
