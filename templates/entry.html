@@ -5,6 +5,7 @@
 
 <h2>{{ blog.title }}</h2>
 <p>{{ blog.body }}</p>
-<p class="user">written by <a href="./blog?userid={{ blog.user_id }}">{{ user.username }}</a></p>
+<p>written by <a href="/blog?userid={{ blog.user_id }}">{{ blog.user.username }}</a></p>
+
 
 {% endblock %}
